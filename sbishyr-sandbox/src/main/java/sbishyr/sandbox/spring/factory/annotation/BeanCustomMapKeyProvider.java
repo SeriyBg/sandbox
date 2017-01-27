@@ -5,5 +5,5 @@ package sbishyr.sandbox.spring.factory.annotation;
  */
 public interface BeanCustomMapKeyProvider<T> {
 
-    <T> T getKey();
+    T getKey();
 }
