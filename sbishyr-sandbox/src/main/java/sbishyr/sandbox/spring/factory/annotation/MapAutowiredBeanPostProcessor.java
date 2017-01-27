@@ -17,11 +17,13 @@ public class MapAutowiredBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String s) throws BeansException {
+        System.out.println(bean);
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String s) throws BeansException {
+        System.out.println(bean);
         return bean;
     }
 }
