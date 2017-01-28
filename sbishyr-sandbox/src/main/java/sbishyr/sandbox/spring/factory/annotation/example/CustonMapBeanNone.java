@@ -12,6 +12,6 @@ public class CustonMapBeanNone implements CustomMapBean {
 
     @Override
     public CustomKeyType getKey() {
-        return null;
+        return CustomKeyType.NONE;
     }
 }
