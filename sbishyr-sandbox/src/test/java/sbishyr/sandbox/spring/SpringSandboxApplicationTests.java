@@ -26,7 +26,10 @@ public class SpringSandboxApplicationTests {
 
 	@Test
 	public void shoulHaveAutowiredMap() throws Exception {
-		assertThat(map).containsKey(CustomKeyType.NONE);
-		assertThat(map.get(CustomKeyType.NONE)).isEqualTo(new CustonMapBeanNone());
+		assertThat(map).as("Map should be Autowired").isNotNull();
+		assertThat(map).as("Autowired map should contain %s", CustomKeyType.NONE).containsKey(CustomKeyType.NONE);
+		assertThat(map.get(CustomKeyType.NONE))
+				.as("Value type for %s should be %s", CustomKeyType.NONE, CustonMapBeanNone.class)
+				.isEqualTo(new CustonMapBeanNone());
 	}
 }
