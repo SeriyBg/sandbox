@@ -32,4 +32,9 @@ public class SpringSandboxApplicationTests {
 				.as("Value type for %s should be %s", CustomKeyType.NONE, CustonMapBeanNone.class)
 				.isEqualTo(new CustonMapBeanNone());
 	}
+
+	@Test
+	public void shoulHaveFirstElementInMap() throws Exception {
+		assertThat(map).containsKeys(CustomKeyType.FIRST);
+	}
 }
