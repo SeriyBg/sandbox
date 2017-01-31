@@ -2,6 +2,7 @@ package sbishyr.sandbox.spring;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,9 +28,21 @@ public class SpringSandboxApplicationNegativeCasesTest {
     @MapAutowired
     private Map<CustomKeyType, CustomMapBean> map;
 
+    @Autowired
+    private BeanCustomMapKeyProvider<String> stringBeanCustomMapKeyProvider;
+
+    @MapAutowired
+    private Map<String, CustomMapBean> firstLevelIface;
+
     @Test
     public void shouldNotFailOnAutowiredMapWithOtherGenericInterfacesAdded() throws Exception {
+        assertThat(stringBeanCustomMapKeyProvider).isNotNull();
         assertThat(map.get("String")).isNull();
+    }
+
+    @Test
+    public void shouldAutowireMapWhenInterfaceIsOnTheFirstLevel() throws Exception {
+        assertThat(firstLevelIface).containsKey("String");
     }
 
     @Configuration
