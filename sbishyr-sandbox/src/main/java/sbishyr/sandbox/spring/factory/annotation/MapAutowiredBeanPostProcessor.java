@@ -61,7 +61,8 @@ public class MapAutowiredBeanPostProcessor implements BeanPostProcessor {
                                                                Type mapValueType) {
         List<BeanCustomMapKeyProvider> result = new ArrayList<>();
         beans.forEach((beanName, bean) -> {
-            Set<Class<?>> interfaces = ClassUtils.getAllInterfacesAsSet(bean);
+            Class<? extends BeanCustomMapKeyProvider> beanClass = bean.getClass();
+            Set<Class<?>> interfaces = ClassUtils.getAllInterfacesForClassAsSet(beanClass);
             for (Class<?> anInterface : interfaces) {
                 Type[] genericInterfaces = anInterface.getGenericInterfaces();
                 for (Type genericInterface : genericInterfaces) {
