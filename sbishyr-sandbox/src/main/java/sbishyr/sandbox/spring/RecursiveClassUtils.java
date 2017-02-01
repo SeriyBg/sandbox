@@ -12,14 +12,11 @@ public class RecursiveClassUtils {
         Class<?>[] allInterfacesForClassAsSet = clazz.getInterfaces();
         for (Class<?> iface : allInterfacesForClassAsSet) {
             result.add(iface);
-            if (hasSuperInterfaces(allInterfacesForClassAsSet)) {
+            if (allInterfacesForClassAsSet.length != 0) {
                 result.addAll(getAllInterfaces(iface));
             }
         }
         return result;
     }
 
-    private static boolean hasSuperInterfaces(Class<?>[] allInterfacesForClassAsSet) {
-        return allInterfacesForClassAsSet.length != 0;
-    }
 }
