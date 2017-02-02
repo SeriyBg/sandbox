@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
+import sbishyr.sandbox.spring.RecursiveClassUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -62,22 +63,32 @@ public class MapAutowiredBeanPostProcessor implements BeanPostProcessor {
         List<BeanCustomMapKeyProvider> result = new ArrayList<>();
         beans.forEach((beanName, bean) -> {
             Class<? extends BeanCustomMapKeyProvider> beanClass = bean.getClass();
-            Set<Class<?>> interfaces = ClassUtils.getAllInterfacesForClassAsSet(beanClass);
-            for (Class<?> anInterface : interfaces) {
+            Set<Class<?>> allInterfaces = RecursiveClassUtils.getAllInterfaces(beanClass);
+            Type[] beanClassGenericInterfaces = beanClass.getGenericInterfaces();
+            getBeanFromGenericInterfaces(mapValueType, bean, beanClassGenericInterfaces).ifPresent(result::add);
+            for (Class<?> anInterface : allInterfaces) {
                 Type[] genericInterfaces = anInterface.getGenericInterfaces();
-                for (Type genericInterface : genericInterfaces) {
-                    if (genericInterface instanceof ParameterizedType) {
-                        ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
-                        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                        for (Type actualTypeArgument : actualTypeArguments) {
-                            if (actualTypeArgument.equals(mapValueType)) {
-                                result.add(bean);
-                            }
-                         }
-                    }
-                }
+                getBeanFromGenericInterfaces(mapValueType, bean, genericInterfaces).ifPresent(result::add);
             }
         });
         return result;
+    }
+
+    private Optional<BeanCustomMapKeyProvider> getBeanFromGenericInterfaces(
+                                Type mapValueType, BeanCustomMapKeyProvider bean, Type[] beanClassGenericInterfaces) {
+        for (Type genericInterface : beanClassGenericInterfaces) {
+            if (genericInterface instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
+                if (ClassUtils.isAssignable((Class)parameterizedType.getRawType(), BeanCustomMapKeyProvider.class)){
+                    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                    for (Type actualTypeArgument : actualTypeArguments) {
+                        if (actualTypeArgument.equals(mapValueType)) {
+                            return Optional.of(bean);
+                        }
+                    }
+                }
+            }
+        }
+        return Optional.empty();
     }
 }
